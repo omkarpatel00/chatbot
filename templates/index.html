@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Interface</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            margin: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .chatbox {
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            height: 300px;
+            overflow-y: auto;
+        }
+        .user-message {
+            background-color: #d1e8eb;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            max-width: 80%;
+        }
+        .robo-message {
+            background-color: #f0d0c0;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            max-width: 80%;
+        }
+        input[type=text] {
+            width: 70%;
+            padding: 10px;
+            margin: 10px 0;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Chatbot Interface</h1>
+        <div class="chatbox" id="chatbox">
+            <div class="robo-message">
+                <p>ROBO: Hello! How can I help you today?</p>
+            </div>
+        </div>
+        <input type="text" id="userInput" placeholder="Enter your message...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <script>
+        function sendMessage() {
+            var userInput = document.getElementById("userInput").value;
+            var chatbox = document.getElementById("chatbox");
+            var userMessage = '<div class="user-message"><p>User: ' + userInput + '</p></div>';
+            chatbox.innerHTML += userMessage;
+
+            // Send user message to server
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "/get?msg=" + userInput, true);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    var response = JSON.parse(xhr.responseText)['response'];
+                    var roboMessage = '<div class="robo-message"><p>ROBO: ' + response + '</p></div>';
+                    chatbox.innerHTML += roboMessage;
+                    chatbox.scrollTop = chatbox.scrollHeight;  // Scroll to bottom of chatbox
+                }
+            };
+            xhr.send();
+            document.getElementById("userInput").value = "";
+        }
+    </script>
+</body>
+</html>
+
